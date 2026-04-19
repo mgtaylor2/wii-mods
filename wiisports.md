@@ -1,4 +1,14 @@
 # Wii Sports Mods
+## Helper Codes
+### Master Button Activator [Bully@Wiiplaza]
+```
+F6000001 80008100
+80BF0004 807F0008
+D2000010 00000002
+90DF0000 3D808000
+90CC1500 00000000
+E0000000 80008000
+```
 ## Tennis
 ### Generic Info / Memory Address Mapping
 * 8038B264 = tennis player speed running
@@ -29,6 +39,31 @@
 ```
 0438B264 40400000
 ```
+### Misc. Tennis Hacks
+#### Unlimited Bounces Allowed
+```
+F6000001 80008100
+801E01E4 540007BD
+14000034 38000000
+E0000000 80008000
+```
+#### Send Ball to Ground on Button Press
+*ZZZZ = Button(s) to press to send ball to ground (fill in the same twice)*
+```
+F6000001 80008100
+7FE5FB78 ECA20FFA
+D2000008 00000004
+C07E000C 3D808000
+A18C1502 718CZZZZ
+4182000C 3D803F40
+919E000C 00000000
+D2000024 00000003
+3D808000 A18C1502
+718CZZZZ 40820008
+D07E000C 00000000
+E0000000 80008000
+```
+
 ## Baseball
 ### Info / Memory Mapping
 * 803C5E5C = fastball
@@ -62,4 +97,25 @@ Limitations: Ground ball defense is worse.
 ```
 043C5E5C 411CCCCC
 043C5EAC BD6F9DB2
+```
+### Misc. Baseball Hacks
+
+## Boxing
+### Instant KO (Player 1 + Player 2 / CPU)
+```
+F6000001 80008100
+C006002C C026000C
+D2000008 00000004
+2C000000 4082000C
+3D800000 48000008
+3D800000 91860008
+C0460008 00000000
+E0000000 80008000
+```
+## Bowling
+
+## Golf
+### Wind Speed
+```
+TBD
 ```
