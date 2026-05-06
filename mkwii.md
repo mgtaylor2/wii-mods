@@ -352,6 +352,13 @@ DE000000 80008180
 E0000000 80008000
 ```
 
+## Fast Bullet Bill 5x
+```
+048B1134 44340000
+048B1138 44340000
+00571CF7 00000038
+```
+
 # 4 Player Hacks
 ## P1-P4 D-Pad Up = Mushroom, D-Pad Down = Clear Item
 ```
@@ -435,6 +442,7 @@ DE000000 80008180
 14000090 00000000
 E0000000 80008000
 ```
+
 
 #### Mapping info
 [link] https://wiki.tockdom.com/wiki/Controller_Activator
