@@ -1,0 +1,28 @@
+# WIP
+
+## Basketball
+### Dunk Only
+```
+04501F64 38600000
+0452DC1C 2C030000
+```
+### Half Court Shots (Press A after initial handoff goes WAY back but only for a little bit)
+```
+C2501E10 00000001
+60000000 00000000
+C2501E14 00000001
+60000000 00000000
+C2501E18 00000001
+60000000 00000000
+```
+### CUSTOM on off dunking P1 press 1 to slam dunk before hit B, press 2 for normal shot before hit B
+```
+2086E024 00000200
+04501F64 38600000
+0452DC1C 2C030000
+E0000000 80008000
+2086E024 00000100
+04501F64 3860FFFF
+0452DC1C 2C03FFFF
+E0000000 80008000
+```
