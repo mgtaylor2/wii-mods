@@ -61,11 +61,6 @@ NOPs the friction calculation. Ball slides instead of decelerating.
 ```
 0433E55C 60000000
 ```
-### Masters Ping Pong - Heavy Friction Ball - basically makes it super bouncy
-Write 2x instead of NOP
-```
-0406B45E4 40000000
-```
 ### Ping Pong Crisis - Modified Ball Physics - BREAKS GAME AS IS ball goes to the moon on serve never comes back
 NOPs a different check — likely ball speed/reset behavior. Combined with Masters it's chaotic.
 ```
