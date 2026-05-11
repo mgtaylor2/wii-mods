@@ -138,6 +138,14 @@ E0000000 80008000
 ```
 Note: The cycling codes check address 0x80DEEFEC == 3 as a "game state is active" gate. This may or may not hold value 3 in vanilla WSR during a cycling race — if not, the heart-loss parts won't activate. The tornado/randomness toggle parts (button-based) should still work regardless.
 ## Air Sports
+### Machine Gun Dogfight (Press and hold A)
 ```
-tbd
+044338BC 38C600FF
+```
+### Infinite Dogfight Time Reset (Press - and 1 at the same time to reset to 3 min)
+```
+2086E024 00001200
+42000000 92000000
+04A6B648 00003840
+E0000000 80008000
 ```
