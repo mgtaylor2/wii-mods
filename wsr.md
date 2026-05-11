@@ -18,13 +18,12 @@ Notes:
 
 ; Wii Sports Resort Archery Wind
 ; Display addresses (confirmed working)
-0127092E 00000008   ← constant south arrow
+`0127092E 00000008`   ← constant south arrow
 
-; Speed = 0 on display, MAY also kill physics wind
+Example Gecko Speed = 0 on display, SHOULD also kill physics wind
+```
 0127092D 00000000
 0127092F 00000000
-```
-tbd
 ```
 ## Basketball
 ### Zero Gravity Basketball - NOT TESTED
