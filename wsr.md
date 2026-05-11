@@ -12,6 +12,17 @@ tbd
 tbd
 ```
 ## Archery
+### Work in Progress
+Notes:
+8127092e is wind direction!
+
+; Wii Sports Resort Archery Wind
+; Display addresses (confirmed working)
+0127092E 00000008   ← constant south arrow
+
+; Speed = 0 on display, MAY also kill physics wind
+0127092D 00000000
+0127092F 00000000
 ```
 tbd
 ```
