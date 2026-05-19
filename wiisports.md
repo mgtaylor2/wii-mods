@@ -71,6 +71,7 @@ E0000000 80008000
 * 803C5E6C = curveball
 * 803C5E74 = screwball
 * 803C5EAC = physics modifier (boost / decay tweak)
+
 ### Wii Baseball FAST Pitch Edition
 Everything is fast!
 ```
@@ -118,4 +119,106 @@ E0000000 80008000
 ### Wind Speed
 ```
 TBD
+```
+
+
+----
+# Wii Baseball Mapping clean up later:
+## Wii Sports Baseball — Pitch Trajectory & Aim Memory Map
+**Game ID:** RSPE01 | **Emulator:** Dolphin
+
+---
+
+### Speed (Previously Known)
+
+| Address | Default (Hex) | Default (Float) | Description |
+|---------|--------------|-----------------|-------------|
+| 803C5E5C | 408AF838 | 4.343 | Fastball speed |
+| 803C5E60 | 40400000 | 3.0 | Splitter speed |
+| 803C5E6C | 40800000 | 4.0 | Curveball speed |
+| 803C5E74 | 40800000 | 4.0 | Screwball speed |
+
+---
+
+### X Axis — Horizontal Aim (NEW)
+
+| Address | Default (Float) | Description | Confirmed? |
+|---------|-----------------|-------------|------------|
+| 803C5E7C | 0.0 | Fastball X aim — 0 = home plate, + = right, − = left | ✅ Confirmed |
+
+> Pattern likely continues for other pitch types nearby — needs mapping.
+
+---
+
+### Y Axis — Vertical Trajectory (NEW)
+
+| Address | Default (Float) | Pitch | Input Strength | Confirmed? |
+|---------|-----------------|-------|---------------|------------|
+| 803C5E80 | ~0.028 | Curveball A | Light | ✅ Confirmed |
+| 803C5E84 | ~-0.026 | Curveball A | Hard | ✅ Confirmed |
+| 803C5E98 | ~-0.045 | Curveball B | Normal | 🔍 Hypothesized |
+| 803C5E9C | ~0.040 | Curveball B | Hard | 🔍 Hypothesized |
+| 803C5EA8 | ~0.01 | Fastball | Light / Normal | ✅ Confirmed |
+| 803C5EAC | ~-0.039 | Fastball | Hard / Max | ✅ Confirmed |
+| 803C5EB0 | ~0.01 | Splitter A+B | Light | ✅ Confirmed |
+| 803C5EB4 | ~0.005 | Splitter | Hard (swap EB4/EB8?) | ⚠️ Uncertain |
+| 803C5EB8 | ~0.005 | Splitter A+B | Normal (swap EB4/EB8?) | ⚠️ Uncertain |
+
+---
+
+### Gecko Codes
+
+#### Moon Ball — Fastball Goes Straight Up
+```
+043C5EA8 42C80000
+043C5EAC 42C80000
+```
+`42C80000` = 100.0 — light or hard input both launch vertical
+
+---
+
+#### Ground Worm — Fastball Buries Instantly
+```
+043C5EA8 C2C80000
+043C5EAC C2C80000
+```
+`C2C80000` = -100.0 — ball drills into the ground on release
+
+---
+
+#### First Base Special — Fastball Throws to 1st Base
+```
+043C5E7C C1A00000
+```
+`C1A00000` = -20.0 — hard left X aim, ball goes to 1st base side
+
+---
+
+#### Vertical Splitter — A+B Throw Goes Straight Up
+```
+043C5EB0 42C80000
+043C5EB4 42C80000
+043C5EB8 42C80000
+```
+
+---
+
+#### Sky Curveball — Curveball A Launches Upward
+```
+043C5E80 42C80000
+043C5E84 42C80000
+```
+
+---
+
+#### Chaos Pitcher — Everything Goes Wrong
+*All Y axes maxed, fastball aimed hard left*
+```
+043C5E7C C1A00000
+043C5E80 42C80000
+043C5E84 42C80000
+043C5EA8 42C80000
+043C5EAC 42C80000
+043C5EB0 42C80000
+043C5EB8 42C80000
 ```
