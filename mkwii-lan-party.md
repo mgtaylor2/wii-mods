@@ -196,3 +196,116 @@ ElectronWarp/component chain needed unless the real Wii joins as node 4.)
 - Insane Kart Wii (GameBanana) — <https://gamebanana.com/mods/531066>
 - Dolphin on M1 — <https://dolphin-emu.org/blog/2021/05/24/temptation-of-the-apple-dolphin-on-macos-m1/>
 - DolphinBar / Bluetooth Passthrough — <https://dolphin-emu.org/blog/2016/10/24/bluetooth-passthrough/>
+- 4 Dolphin instances + 8 controllers on one PC (forum) — <https://forums.dolphin-emu.org/Thread-4-dolphin-instances-and-4x-mario-kart-on-one-computer-playable-with-8-controllers>
+
+---
+
+## Single-PC Prototype — TAP adapters (the $0 go/no-go test)
+
+**Why this section exists:** the original plan assumed distinct IPs require separate
+machines or VMs (and VMs hit a GPU-virtualization wall — a single consumer GeForce
+can't give real 3D acceleration to 4 guests; no SR-IOV/vGPU, and full passthrough is
+one-VM-only). There is a **third way that needs zero extra hardware**: **TAP virtual
+network adapters**. You create several software NICs on one Windows box, bridge them,
+and give each Dolphin instance its own virtual IP/MAC via the emulated **Broadband
+Adapter (BBA)**. Four *native* instances then share the one real GPU automatically —
+no VMs, no GPU wall, no Ethernet adapter, no switch, and **not touching the apartment
+network at all** (which has client isolation that kills LAN broadcast anyway).
+
+### ⚠️ Proven vs. unverified — read this first
+
+- **PROVEN (GameCube):** the forum guide below gets **4 networked instances + 8
+  controllers** on one PC. But it configures **GameCube → SP1 → Broadband Adapter**
+  and troubleshoots finding *"GameCube systems via LAN."* That setup is **Mario Kart:
+  Double Dash**, which has *native* GC BBA LAN — hence "no BrainSlug needed."
+- **UNVERIFIED (MKWii):** MKWii is a **Wii** title. It needs **BrainSlug** for LAN,
+  and Wii networking in Dolphin does **not** obviously route through the per-instance
+  GC BBA/SP1 TAP path. So whether 4 MKWii+BrainSlug instances bind to 4 separate TAP
+  adapters is **the open question this prototype must answer.** Do not assume it works
+  until the discovery test below passes with MKWii specifically.
+- **Fallback if MKWii won't bind to TAP:** prototype with **Mario Kart: Double Dash**
+  (proven path) to validate the rig, then fall back to **separate physical machines**
+  for the real MKWii party (the broadcast-on-flat-L2 topology is known-good).
+
+### Prerequisites (all free)
+
+- Windows 11 (Pro not required for this — it's all native, no Hyper-V).
+- One Dolphin build, one MKWii dump (+ BrainSlug LAN SD payload) for the MKWii test,
+  and/or a Double Dash dump for the proven GC test.
+- **OpenVPN installer** (we only use its TAP-Windows V9 driver) — <https://openvpn.net/community-downloads/>
+- `VC_redist.x64.exe` (Visual C++ runtime) installed.
+- Any USB controllers for input — **no DolphinBars needed for this test.**
+
+### Part 1 — Create the TAP adapters
+
+1. Install OpenVPN, ticking **only** the **TAP Virtual Ethernet Adapter** component.
+   This creates **one** `TAP-Windows Adapter V9` by default.
+2. Start menu → run **"Add a new TAP virtual ethernet adapter"** **3 more times** so
+   you end up with **4** `TAP-Windows Adapter V9` connections total. (Start with 2 if
+   you just want the minimal discovery test, then scale up.)
+
+### Part 2 — Bridge them
+
+3. Open **Control Panel → Network Connections** (`ncpa.cpl`).
+4. Select **all 4** TAP adapters (**Ctrl + left-click** each), right-click →
+   **"Bridge Connections."** An error may flash, but a **Network Bridge** should
+   appear when it finishes. Open its properties and confirm all 4 adapters are listed.
+   *(Bridging puts them on one L2 segment so LAN broadcast/discovery propagates.)*
+
+### Part 3 — Four portable Dolphin instances
+
+5. In your Dolphin folder, create an **empty file named `portable.txt`** next to
+   `Dolphin.exe` (this makes Dolphin store its config in its own folder).
+6. **Copy the entire folder 3 times** → `Dolphin_1`, `Dolphin_2`, `Dolphin_3`,
+   `Dolphin_4`. Each is now fully independent (no shared config).
+
+### Part 4 — Per-instance Dolphin config
+
+For **each** instance, in **Settings → GameCube → SP1 slot**:
+
+7. Set the device to **Broadband Adapter (TAP)** and enable it.
+8. Give each instance a **unique MAC address**:
+   - `Dolphin_1` → `00:00:00:00:00:01`
+   - `Dolphin_2` → `00:00:00:00:00:02`
+   - `Dolphin_3` → `00:00:00:00:00:03`
+   - `Dolphin_4` → `00:00:00:00:00:04`
+9. In **Controllers**, enable **Background Input** so instances keep reading their
+   pads when not focused.
+
+### Part 5 — Controllers (8 across 4 instances)
+
+10. **XInput hard-caps at 4 controllers.** To exceed 4, use **DInput-type** pads
+    (e.g. PlayStation controllers). Wire them via **USB**, not Bluetooth.
+11. Assign **2 controllers per instance** (slots active per instance; the others off),
+    so 4 instances × 2 = 8 players. *(DolphinBar/Wiimote routing is a later problem —
+    not needed to prove networking.)*
+
+### Part 6 — Launch and the discovery test (the actual go/no-go)
+
+12. Launch all instances (start with **2** to keep it simple), boot the game in each.
+    For **MKWii**, load it through **BrainSlug** and choose **LAN Multiplayer**; for the
+    **Double Dash** proof-of-rig, just pick **LAN** in-game.
+13. Select **LAN play** on each instance. After a moment a **countdown** starts and the
+    per-instance connection indicators should clear their **red X**.
+14. ✅ **Success = the game reports the other systems found for LAN play** (e.g. "N
+    systems were found"). That single screen is the entire viability answer.
+
+### Troubleshooting
+
+- **No systems found?** Drop to **2** TAP adapters bridged and retest. If 2 work, add a
+  3rd to the bridge and retest, then the 4th — isolates which adapter/bridge step broke.
+- **Bridge "failed" message** but a bridge still appears → usually fine, continue.
+- **MKWii finds nothing but Double Dash does** → this is the unverified-path risk firing:
+  MKWii's Wii network stack isn't using the TAP BBA. Fall back to separate machines for
+  the real MKWii party; keep the single-PC TAP rig for GC titles.
+- **Wi-Fi vs wired:** the mod doesn't care about the medium for *discovery* — wired is a
+  *desync/jitter* requirement for the real event, not a protocol one. (TAP sidesteps this
+  entirely on one box: there's no physical link to jitter.)
+
+### What this buys you
+
+If the MKWii discovery test passes here, the whole party can run on the **one gaming PC**
+(5800X3D + RTX 4080 Super) with **native instances sharing the GPU** — no VMs, no
+GPU-P, no second machine, and **DolphinBars become the only remaining purchase to
+evaluate** (and only *after* networking is proven). If it fails for MKWii, you've spent
+**$0** learning that, and the separate-machines plan above is the fallback.
